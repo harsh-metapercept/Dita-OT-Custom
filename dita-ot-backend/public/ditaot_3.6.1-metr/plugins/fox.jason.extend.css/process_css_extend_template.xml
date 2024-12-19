@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--ant-->
+<!--
+	This file is part of the DITA-OT Extend CSS Plug-in project.
+	See the accompanying LICENSE file for applicable licenses.
+-->
+<project
+  xmlns:if="ant:if"
+  xmlns:unless="ant:unless"
+  xmlns:dita="http://dita-ot.sourceforge.net"
+  name="fox.jason.extend.css"
+>
+
+	<target name="extend.css.init">
+		<mkdir dir="${dita.temp.dir}"/>
+		<tempfile
+      deleteonexit="true"
+      destdir="${dita.temp.dir}"
+      property="extend.css.file"
+      suffix=".css"
+      createfile="true"
+    />
+	</target>
+
+	<target name="extend.css.copy">
+		<local name="is.html.transform"/>
+		<local name="extend.css.path"/>
+		<condition property="is.html.transform">
+			<or>
+				<equals arg1="${out.ext}" arg2=".html"/>
+				<!-- add any additional missing transtypes here -->
+				<contains string="${transtype}" substring="HTML" casesensitive="no"/>
+				<contains string="${transtype}" substring="eclipsehelp" casesensitive="no"/>
+			</or>
+		</condition>
+		<condition property="extend.css.path" value="${user.csspath}" else="">
+			<isset property="user.csspath"/>
+		</condition>
+		<copy
+      if:set="is.html.transform"
+      tofile="${output.dir}/${extend.css.path}/common-extended.css"
+      file="${extend.css.file}"
+      overwrite="true"
+    />
+	</target>
+
+	<target
+    name="extend.css"
+    dita:depends="extend.css.init,{extend.css.process.pre},{extend.css.process},{extend.css.process.post},extend.css.copy"
+    dita:extension="depends org.dita.dost.platform.InsertDependsAction"
+  />
+
+
+</project>

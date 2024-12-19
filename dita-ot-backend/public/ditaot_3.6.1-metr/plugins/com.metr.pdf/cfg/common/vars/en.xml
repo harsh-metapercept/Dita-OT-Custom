@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vars xmlns="http://www.idiominc.com/opentopic/vars">
+  <!-- Remove dot from list number -->
+  <!-- <variable id="Ordered List Number">
+    <param ref-name="number"/>
+  </variable> -->
+
+  <!-- The heading to put at the top of the Table of Contents -->
+
+  <variable id="Cover">Cover</variable>
+  <variable id="Table of Contents">Contents</variable>
+
+  <!-- Template for generated page number of a reference in printed manual. -->
+  <variable id="On the page"> on page <param ref-name="pagenum"/></variable>
+
+  <!-- Template for generated page number of a reference
+       in printed manual, when referenced element has no title. -->
+  <variable id="Page"> page <param ref-name="pagenum"/></variable>
+
+
+  <!-- Text to use for figure titles, with title text or only figure number. -->
+  <variable id="Figure.title"><param ref-name="title"/></variable>
+  <variable id="Figure Number">Figure <param ref-name="number"/></variable>
+
+  <variable id="Table of Contents Chapter"><param ref-name="number"/>. </variable>
+
+
+
+      <!--Ordered List Format-->
+      <variable id="Ordered List Format 1">1</variable>
+      <variable id="Ordered List Format 2">a</variable>
+      <variable id="Ordered List Format 3">i</variable>
+      <variable id="Ordered List Number 4"><param ref-name="number"/>) </variable>
+
+       <!--Circle-->
+       <!-- <variable id="Unordered List bullet L3">&#x25CF;</variable>  -->
+       <!--Small Circle-->
+       <variable id="Unordered List bullet L3">&#x2022;</variable> 
+
+      <!--Notes Icons-->
+      <variable id="note Note Image Path">info-circle.svg</variable>
+      <variable id="important Note Image Path">exclamation-circle.svg</variable>
+      <variable id="warning Note Image Path">exclamation-triangle-white.svg</variable>
+      <variable id="tip Note Image Path">tips.svg</variable>
+      <variable id="remember Note Image Path">remember.svg</variable>
+      <variable id="fastpath Note Image Path">signage.svg</variable>
+      <variable id="attention Note Image Path">attention.svg</variable>
+      <variable id="caution Note Image Path">exclamation-triangle-white.svg</variable>
+      <variable id="danger Note Image Path">triangle.svg</variable>
+</vars>

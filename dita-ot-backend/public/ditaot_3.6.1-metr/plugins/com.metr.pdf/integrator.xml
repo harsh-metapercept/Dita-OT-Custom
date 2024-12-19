@@ -1,0 +1,14 @@
+<project name="com.metr.pdf" default="dita2metrpdf">
+    <property name="transtype" value="metrpdf"/>
+    <target name="dita2metrpdf"  
+            xmlns:dita="http://dita-ot.sourceforge.net" 
+            dita:extension="depends org.dita.dost.platform.InsertDependsAction">
+
+        <property name="customization.dir" location="${dita.plugin.com.metr.pdf.dir}/cfg"/>
+        <property name="args.fo.userconfig" value="${dita.plugin.com.metr.pdf.dir}/fop.xconf"/>
+
+        <property name="artworkPrefix" value="${customization.dir}/common/artwork/Icons"/>
+        <antcall target="dita2pdf2"/>
+        
+    </target>
+</project>

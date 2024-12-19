@@ -1,0 +1,3 @@
+<project>
+    <import file="integrator.xml"/>
+</project>

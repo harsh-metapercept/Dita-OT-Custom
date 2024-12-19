@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin id="com.metr.pdf">
+  <require plugin="org.dita.pdf2"/>
+  <feature extension="dita.conductor.transtype.check" value="metrpdf" />
+  <feature extension="dita.transtype.print" value="metrpdf"/>
+  <feature extension="dita.conductor.target.relative" file="build.xml"/>
+  <feature extension="dita.conductor.pdf2.param" value="params.xml" type="file"/>
+</plugin>

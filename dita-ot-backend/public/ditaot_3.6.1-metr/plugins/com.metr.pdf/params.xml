@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters xmlns:if="ant:if" xmlns:unless="ant:unless">
+  <param name="input.dir.url" expression="${user.input.dir.url}"/>
+  <param name="DITATEMP" expression="${dita.temp.dir}" if:set="dita.temp.dir"/>
+  <param name="INPUTDIR" expression="${args.input}" if:set="args.input"/>
+  <param name="TOCROOT" expression="${dita.map.filename.root}"/>
+  
+</parameters>
