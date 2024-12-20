@@ -2,28 +2,28 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&family=Roboto:wght@300;400;500;600;700&display=swap");
 
 :root {
-  --bs-link-hover-color: #0098ff !important;
+  --bs-link-hover-color: #ff0004 !important;
 
-  --primary-0: #66feff; /* Updated */
-  --primary-100: #4de5ff; /* Updated */
-  --primary-200: #33cbff; /* Updated */
-  --primary-300: #1ab2ff; /* Updated */
-  --primary-400: #0098ff; /* Updated */
-  --primary-500: #007fe6; /* Updated */
-  --primary-600: #0065cc; /* Updated */
-  --primary-700: #004cb3; /* Updated */
-  --primary-800: #003299; /* Updated */
-  --primary-900: #001980; /* Updated */
+  --primary-0: #ff666a; /* Updated */
+  --primary-100: #ff4d51; /* Updated */
+  --primary-200: #ff3337; /* Updated */
+  --primary-300: #ff1a1e; /* Updated */
+  --primary-400: #ff0004; /* Updated */
+  --primary-500: #e60000; /* Updated */
+  --primary-600: #cc0000; /* Updated */
+  --primary-700: #b30000; /* Updated */
+  --primary-800: #990000; /* Updated */
+  --primary-900: #800000; /* Updated */
 
-  --secondary-0: #66feff; /* Updated */
-  --secondary-100: #4de5ff; /* Updated */
-  --secondary-200: #33cbff; /* Updated */
-  --secondary-300: #1ab2ff; /* Updated */
-  --secondary-400: #0098ff; /* Updated */
-  --secondary-500: #007fe6; /* Updated */
-  --secondary-600: #0065cc; /* Updated */
-  --secondary-700: #004cb3; /* Updated */
-  --secondary-800: #003299; /* Updated */
+  --secondary-0: #ff666a; /* Updated */
+  --secondary-100: #ff4d51; /* Updated */
+  --secondary-200: #ff3337; /* Updated */
+  --secondary-300: #ff1a1e; /* Updated */
+  --secondary-400: #ff0004; /* Updated */
+  --secondary-500: #e60000; /* Updated */
+  --secondary-600: #cc0000; /* Updated */
+  --secondary-700: #b30000; /* Updated */
+  --secondary-800: #990000; /* Updated */
 
   --white: #fdfdfd; /* Updated */
   --black: #101010; /* Updated */
