@@ -145,9 +145,7 @@
   </div>
   <footer class="ignore-this no-print sticky-lg-bottom">
     <div class="container">
-      <span class="credit ignore-this no-print">
-        Copyright © 2024 <a  href="https://metapercept.com/" target="_blank">Metapercept Technology Services LLP</a> All Rights Reserved
-      </span>
+      <span class="credit ignore-this no-print">Copyright © 2024 <a href="https://amazon.com/" target="_blank">amazon</a> All Rights Reserved</span>
     </div>
   </footer>
       <!-- Footer  -->

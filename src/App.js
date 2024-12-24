@@ -5,10 +5,12 @@ import axios from "axios";
 const App = () => {
   const [primaryColor, setPrimaryColor] = useState("#ffffff");
   const [logoFile, setLogoFile] = useState(null);
+  const [companyName, setCompanyName] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
   const [uploadMessage, setUploadMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleApplyChanges = async () => {
     if (!primaryColor || !logoFile) {
       setUploadMessage("Please select a primary color and upload a logo file.");
       return;
@@ -19,7 +21,7 @@ const App = () => {
     formData.append("logo", logoFile);
 
     setIsLoading(true);
-    setUploadMessage(""); // Reset any previous messages
+    setUploadMessage("");
 
     try {
       const response = await axios.post(
@@ -41,6 +43,25 @@ const App = () => {
     }
   };
 
+  const handleUpdateFooter = async () => {
+    if (!companyName.trim() || !companyWebsite.trim()) {
+      setUploadMessage("Company name and website cannot be empty.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/update-footer", {
+        companyName,
+        companyWebsite,
+      });
+      setUploadMessage("Footer updated successfully!");
+      console.log("Response:", response.data);
+    } catch (error) {
+      setUploadMessage("An error occurred while updating the footer.");
+      console.error("Error updating footer:", error.message);
+    }
+  };
+
   const handleDownload = async () => {
     try {
       const response = await axios.get("http://localhost:5000/download", {
@@ -54,6 +75,14 @@ const App = () => {
       console.error("Error downloading:", error.message);
       setUploadMessage("An error occurred while downloading.");
     }
+  };
+
+  const handleReset = () => {
+    setPrimaryColor("#ffffff");
+    setLogoFile(null);
+    setCompanyName("");
+    setCompanyWebsite("");
+    setUploadMessage("");
   };
 
   return (
@@ -87,10 +116,57 @@ const App = () => {
         />
       </div>
 
+      {/* Footer Customization Section */}
+      <div style={{ marginBottom: "20px" }}>
+        <h3 style={{ fontWeight: "bold" }}>Footer Customization</h3>
+
+        {/* Company Name Input */}
+        <div style={{ marginBottom: "20px" }}>
+          <label htmlFor="companyName" style={{ fontWeight: "bold" }}>
+            Company Name:
+          </label>
+          <input
+            id="companyName"
+            type="text"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            placeholder="Enter company name"
+            style={{
+              width: "100%",
+              marginTop: "10px",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+            }}
+          />
+        </div>
+
+        {/* Company Website Input */}
+        <div style={{ marginBottom: "20px" }}>
+          <label htmlFor="companyWebsite" style={{ fontWeight: "bold" }}>
+            Company Website:
+          </label>
+          <input
+            id="companyWebsite"
+            type="url"
+            value={companyWebsite}
+            onChange={(e) => setCompanyWebsite(e.target.value)}
+            placeholder="Enter company website"
+            style={{
+              width: "100%",
+              marginTop: "10px",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+            }}
+          />
+        </div>
+      </div>
+
       {/* Buttons */}
       <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
         <button
-          onClick={handleSubmit}
+          onClick={handleApplyChanges}
           style={{
             padding: "10px 20px",
             backgroundColor: primaryColor,
@@ -105,11 +181,21 @@ const App = () => {
           {isLoading ? "Applying..." : "Apply Changes"}
         </button>
         <button
-          onClick={() => {
-            setPrimaryColor("#ffffff");
-            setLogoFile(null);
-            setUploadMessage("");
+          onClick={handleUpdateFooter}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#007BFF",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontWeight: "bold",
           }}
+        >
+          Update Footer
+        </button>
+        <button
+          onClick={handleReset}
           style={{
             padding: "10px 20px",
             backgroundColor: "#ccc",

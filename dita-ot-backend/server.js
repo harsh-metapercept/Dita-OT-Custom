@@ -218,6 +218,177 @@ app.post("/upload", upload.single("logo"), (req, res) => {
   }
 });
 
+// // Endpoint to update the footer
+// app.post("/update-footer", (req, res) => {
+//   const { companyName } = req.body;
+//   if (!companyName) {
+//     return res.status(400).send("Company name is required.");
+//   }
+
+//   try {
+//     const footerFile = path.join(
+//       DITA_PATH,
+//       "ditaot_3.6.1-metr",
+//       "plugins",
+//       "com.metr.html5",
+//       "xsl",
+//       "html5-bootstrap.xsl"
+//     );
+
+//     let fileContent = fs.readFileSync(footerFile, "utf-8");
+//     const footerRegex =
+//       /<span class="credit ignore-this no-print">(.+?)<\/span>/s;
+//     fileContent = fileContent.replace(
+//       footerRegex,
+//       `<span class="credit ignore-this no-print">Copyright © 2024 <a href="https://${companyName}.com/" target="_blank">${companyName}</a> All Rights Reserved</span>`
+//     );
+//     fs.writeFileSync(footerFile, fileContent, "utf-8");
+//     console.log("Footer updated successfully!");
+//     res.send("Footer updated successfully!");
+//   } catch (err) {
+//     console.error("Error updating footer:", err.message);
+//     res.status(500).send("An error occurred while updating the footer.");
+//   }
+// });
+
+// // Endpoint to update the footer
+// app.post("/update-footer-cover", (req, res) => {
+//   const { companyName } = req.body;
+//   if (!companyName) {
+//     return res.status(400).send("Company name is required.");
+//   }
+
+//   try {
+//     const footerFile2 = path.join(
+//       DITA_PATH,
+//       "ditaot_3.6.1-metr",
+//       "plugins",
+//       "com.metr.html5",
+//       "Customization",
+//       "cover.xsl"
+//     );
+
+//     let fileContent = fs.readFileSync(footerFile2, "utf-8");
+//     const footerRegex =
+//       /<span class="credit ignore-this no-print">(.+?)<\/span>/s;
+//     fileContent = fileContent.replace(
+//       footerRegex,
+//       `<span class="credit ignore-this no-print">Copyright © 2024 <a href="https://${companyName}.com/" target="_blank">${companyName}</a> All Rights Reserved</span>`
+//     );
+//     fs.writeFileSync(footerFile2, fileContent, "utf-8");
+//     console.log("cover-Footer updated successfully!");
+//     res.send("cover-Footer updated successfully!");
+//   } catch (err) {
+//     console.error("Error updating cover-footer:", err.message);
+//     res.status(500).send("An error occurred while updating the cover-footer.");
+//   }
+// });
+
+// Recursive function to find the file
+const findCoverXSL = (dir, filename) => {
+  let result = null;
+
+  if (!fs.existsSync(dir)) {
+    console.error(`Directory not found: ${dir}`);
+    return null;
+  }
+
+  const files = fs.readdirSync(dir);
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+
+    if (fs.statSync(fullPath).isDirectory()) {
+      result = findCoverXSL(fullPath, filename); // Recursively search subdirectories
+      if (result) break; // Stop searching if the file is found
+    } else if (file === filename) {
+      result = fullPath; // Found the file
+      break;
+    }
+  }
+
+  return result;
+};
+
+// Endpoint to update the footer
+app.post("/update-footer", async (req, res) => {
+  const { companyName, companyWebsite } = req.body;
+
+  if (!companyName || companyName.trim() === "") {
+    return res.status(400).send("Company name is required.");
+  }
+  if (!companyWebsite || companyWebsite.trim() === "") {
+    return res.status(400).send("Company website is required.");
+  }
+
+  try {
+    // Paths for the files to update
+    const footerFile1 = path.join(
+      DITA_PATH,
+      "ditaot_3.6.1-metr",
+      "plugins",
+      "com.metr.html5",
+      "xsl",
+      "html5-bootstrap.xsl"
+    );
+
+    // Dynamically locate the cover.xsl file in the Customization folder
+    const customizationDir = path.join(
+      DITA_PATH,
+      "ditaot_3.6.1-metr",
+      "plugins",
+      "com.metr.html5",
+      "Customization"
+    );
+
+    const coverXSLPath = findCoverXSL(customizationDir, "cover.xsl");
+
+    if (!coverXSLPath) {
+      console.error("cover.xsl file not found in Customization directory.");
+      return res.status(404).send("cover.xsl file not found.");
+    }
+
+    console.log("cover.xsl file located at:", coverXSLPath);
+
+    // Footer content to inject
+    const footerContent = `<span class="credit ignore-this no-print">Copyright © 2024 <a href="${companyWebsite.trim()}" target="_blank">${companyName.trim()}</a> All Rights Reserved</span>`;
+
+    // Regex for both files
+    const footerRegex =
+      /<span class="credit ignore-this no-print">(.+?)<\/span>/s;
+
+    // Function to update the footer in a file
+    const updateFooterInFile = async (filePath, footerRegex, footerContent) => {
+      try {
+        console.log(`Updating footer in file: ${filePath}`);
+        if (!fs.existsSync(filePath)) {
+          console.error(`File not found: ${filePath}`);
+          throw new Error(`File not found: ${filePath}`);
+        }
+
+        let fileContent = fs.readFileSync(filePath, "utf-8");
+        fileContent = fileContent.replace(footerRegex, footerContent);
+        fs.writeFileSync(filePath, fileContent, "utf-8");
+        console.log(`Footer updated successfully in ${filePath}`);
+      } catch (err) {
+        console.error(`Error updating footer in ${filePath}:`, err.message);
+        throw new Error(`Error updating footer in ${filePath}`);
+      }
+    };
+
+    // Update both files
+    await Promise.all([
+      updateFooterInFile(footerFile1, footerRegex, footerContent),
+      updateFooterInFile(coverXSLPath, footerRegex, footerContent),
+    ]);
+
+    res.send("Footer updated successfully in both files!");
+  } catch (err) {
+    console.error("Error during footer update:", err.message);
+    res.status(500).send("An error occurred while updating the footer.");
+  }
+});
+
 // Endpoint to download the updated DITA-OT ____download the dita ot code
 app.get("/download", (req, res) => {
   const zipFile = "./updated-dita-ot.zip";
