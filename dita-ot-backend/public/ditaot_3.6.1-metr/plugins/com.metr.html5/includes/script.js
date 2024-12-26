@@ -447,14 +447,15 @@ return console.warn("Feedback submitted..")
 
 
 
-
 // ========================================================== Next and Previous Button Landler 
 
 document.addEventListener("DOMContentLoaded", () => {
   const previousBtn = document.getElementById("previousBtn");
   const nextBtn = document.getElementById("nextBtn");
 
-  const allATags = document.getElementById("sidebar_menulist");
+  const allATags = document.getElementById("bs-sidebar-nav");
+
+  console.log(allATags)
   const aTagsList = allATags.querySelectorAll("a");
   let currenthref = window.location.href;
 
@@ -479,7 +480,9 @@ document.addEventListener("DOMContentLoaded", () => {
     <a href="${previousSibling.href}" class="previous d-flex">
       <div class="arrowIcon me-3 d-flex justify-content-center align-items-center">
         <div class="d-flex justify-content-center align-items-center">
-          <svg width="20" height="20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 13h8V7h-8V2l-8 8 8 8v-5z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+  <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+</svg>
         </div>
       </div>
       <div class="btnText d-flex flex-column justify-content-center">
@@ -503,13 +506,16 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="arrowIcon ms-3 d-flex justify-content-center align-items-center">
             <div class="d-flex justify-content-center align-items-center">
-              <svg width="20" height="20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 7H2v6h8v5l8-8-8-8v5z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+  <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+</svg>
             </div>
           </div>
       </a>
         `;
   }
 });
+
 
 
 // ====================================================== Function for Showing MINI TOC only when user scroll down 
