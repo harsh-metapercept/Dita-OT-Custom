@@ -218,110 +218,96 @@ app.post("/upload", upload.single("logo"), (req, res) => {
   }
 });
 
-// // Endpoint to update the footer
-// app.post("/update-footer", (req, res) => {
-//   const { companyName } = req.body;
-//   if (!companyName) {
-//     return res.status(400).send("Company name is required.");
-//   }
-
-//   try {
-//     const footerFile = path.join(
-//       DITA_PATH,
-//       "ditaot_3.6.1-metr",
-//       "plugins",
-//       "com.metr.html5",
-//       "xsl",
-//       "html5-bootstrap.xsl"
-//     );
-
-//     let fileContent = fs.readFileSync(footerFile, "utf-8");
-//     const footerRegex =
-//       /<span class="credit ignore-this no-print">(.+?)<\/span>/s;
-//     fileContent = fileContent.replace(
-//       footerRegex,
-//       `<span class="credit ignore-this no-print">Copyright © 2024 <a href="https://${companyName}.com/" target="_blank">${companyName}</a> All Rights Reserved</span>`
-//     );
-//     fs.writeFileSync(footerFile, fileContent, "utf-8");
-//     console.log("Footer updated successfully!");
-//     res.send("Footer updated successfully!");
-//   } catch (err) {
-//     console.error("Error updating footer:", err.message);
-//     res.status(500).send("An error occurred while updating the footer.");
-//   }
-// });
-
-// // Endpoint to update the footer
-// app.post("/update-footer-cover", (req, res) => {
-//   const { companyName } = req.body;
-//   if (!companyName) {
-//     return res.status(400).send("Company name is required.");
-//   }
-
-//   try {
-//     const footerFile2 = path.join(
-//       DITA_PATH,
-//       "ditaot_3.6.1-metr",
-//       "plugins",
-//       "com.metr.html5",
-//       "Customization",
-//       "cover.xsl"
-//     );
-
-//     let fileContent = fs.readFileSync(footerFile2, "utf-8");
-//     const footerRegex =
-//       /<span class="credit ignore-this no-print">(.+?)<\/span>/s;
-//     fileContent = fileContent.replace(
-//       footerRegex,
-//       `<span class="credit ignore-this no-print">Copyright © 2024 <a href="https://${companyName}.com/" target="_blank">${companyName}</a> All Rights Reserved</span>`
-//     );
-//     fs.writeFileSync(footerFile2, fileContent, "utf-8");
-//     console.log("cover-Footer updated successfully!");
-//     res.send("cover-Footer updated successfully!");
-//   } catch (err) {
-//     console.error("Error updating cover-footer:", err.message);
-//     res.status(500).send("An error occurred while updating the cover-footer.");
-//   }
-// });
-
-// Recursive function to find the file
-const findCoverXSL = (dir, filename) => {
+// Function to find cover.xsl file
+function findCoverXSL(dir, filename) {
   let result = null;
-
-  if (!fs.existsSync(dir)) {
-    console.error(`Directory not found: ${dir}`);
-    return null;
-  }
-
   const files = fs.readdirSync(dir);
 
-  for (const file of files) {
-    const fullPath = path.join(dir, file);
+  files.forEach((file) => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
 
-    if (fs.statSync(fullPath).isDirectory()) {
-      result = findCoverXSL(fullPath, filename); // Recursively search subdirectories
-      if (result) break; // Stop searching if the file is found
+    if (stat.isDirectory()) {
+      result = findCoverXSL(filePath, filename); // Recursively check subdirectories
     } else if (file === filename) {
-      result = fullPath; // Found the file
-      break;
+      result = filePath; // Return the path when the file is found
     }
-  }
+  });
 
   return result;
+}
+
+// Endpoint to update the title/heading in cover.xsl
+app.post("/update-title", (req, res) => {
+  const { newTitle } = req.body; // Read new title from the frontend input
+
+  if (!newTitle || newTitle.trim() === "") {
+    return res.status(400).send("Title is required.");
+  }
+
+  console.log("New Title:", newTitle); // Log for verification
+
+  try {
+    // Locate the `cover.xsl` file dynamically using the recursive function
+    const coverXSLPath = findCoverXSL(
+      path.join(DITA_PATH, "ditaot_3.6.1-metr", "plugins", "com.metr.html5"),
+      "cover.xsl"
+    );
+
+    if (!coverXSLPath) {
+      return res.status(404).send("cover.xsl file not found.");
+    }
+
+    // Read `cover.xsl` file content
+    let coverXSLContent = fs.readFileSync(coverXSLPath, "utf-8");
+
+    // Replace the placeholder title with the new title
+    const titleRegex = /<span class="mainDitaMapTitle[^>]*>(.*?)<\/span>/;
+    if (!titleRegex.test(coverXSLContent)) {
+      return res.status(400).send("Title placeholder not found in cover.xsl.");
+    }
+
+    coverXSLContent = coverXSLContent.replace(
+      titleRegex,
+      `<span class="mainDitaMapTitle">${newTitle}</span>`
+    );
+
+    // Write the updated content back to `cover.xsl`
+    fs.writeFileSync(coverXSLPath, coverXSLContent, "utf-8");
+
+    console.log("cover.xsl updated successfully with new title!");
+    res.send("Title updated successfully in cover.xsl!");
+  } catch (err) {
+    console.error("Error occurred:", err.message);
+    res.status(500).send("An error occurred while updating the title.");
+  }
+});
+
+// Function to get the current year
+const getCurrentYear = () => {
+  const year = new Date().getFullYear();
+  console.debug("Current year dynamically fetched:", year);
+  return year;
 };
 
 // Endpoint to update the footer
 app.post("/update-footer", async (req, res) => {
+  console.debug("Received request to update the footer with data:", req.body);
+
   const { companyName, companyWebsite } = req.body;
 
   if (!companyName || companyName.trim() === "") {
+    console.error("Validation failed: Company name is missing.");
     return res.status(400).send("Company name is required.");
   }
   if (!companyWebsite || companyWebsite.trim() === "") {
+    console.error("Validation failed: Company website is missing.");
     return res.status(400).send("Company website is required.");
   }
 
   try {
+    console.debug("Locating file paths for updating the footer...");
+
     // Paths for the files to update
     const footerFile1 = path.join(
       DITA_PATH,
@@ -331,6 +317,7 @@ app.post("/update-footer", async (req, res) => {
       "xsl",
       "html5-bootstrap.xsl"
     );
+    console.debug("Path to html5-bootstrap.xsl:", footerFile1);
 
     // Dynamically locate the cover.xsl file in the Customization folder
     const customizationDir = path.join(
@@ -340,6 +327,7 @@ app.post("/update-footer", async (req, res) => {
       "com.metr.html5",
       "Customization"
     );
+    console.debug("Searching for cover.xsl in directory:", customizationDir);
 
     const coverXSLPath = findCoverXSL(customizationDir, "cover.xsl");
 
@@ -348,10 +336,15 @@ app.post("/update-footer", async (req, res) => {
       return res.status(404).send("cover.xsl file not found.");
     }
 
-    console.log("cover.xsl file located at:", coverXSLPath);
+    console.debug("cover.xsl file located at:", coverXSLPath);
 
-    // Footer content to inject
-    const footerContent = `<span class="credit ignore-this no-print">Copyright © 2024 <a href="${companyWebsite.trim()}" target="_blank">${companyName.trim()}</a> All Rights Reserved</span>`;
+    // Fetch current year for footer content
+    const currentYear = getCurrentYear();
+    console.debug("Using current year for the footer:", currentYear);
+
+    // Footer content with dynamic year
+    const footerContent = `<span class="credit ignore-this no-print">Copyright © ${currentYear} <a href="${companyWebsite.trim()}" target="_blank">${companyName.trim()}</a> All Rights Reserved</span>`;
+    console.debug("Generated footer content:", footerContent);
 
     // Regex for both files
     const footerRegex =
@@ -359,17 +352,23 @@ app.post("/update-footer", async (req, res) => {
 
     // Function to update the footer in a file
     const updateFooterInFile = async (filePath, footerRegex, footerContent) => {
+      console.debug(`Starting to update footer in file: ${filePath}`);
       try {
-        console.log(`Updating footer in file: ${filePath}`);
         if (!fs.existsSync(filePath)) {
           console.error(`File not found: ${filePath}`);
           throw new Error(`File not found: ${filePath}`);
         }
 
         let fileContent = fs.readFileSync(filePath, "utf-8");
-        fileContent = fileContent.replace(footerRegex, footerContent);
-        fs.writeFileSync(filePath, fileContent, "utf-8");
-        console.log(`Footer updated successfully in ${filePath}`);
+        console.debug(
+          `Read content from ${filePath}. Length: ${fileContent.length}`
+        );
+
+        const updatedContent = fileContent.replace(footerRegex, footerContent);
+        console.debug(`Footer content updated in memory for file: ${filePath}`);
+
+        fs.writeFileSync(filePath, updatedContent, "utf-8");
+        console.debug(`Footer successfully written to file: ${filePath}`);
       } catch (err) {
         console.error(`Error updating footer in ${filePath}:`, err.message);
         throw new Error(`Error updating footer in ${filePath}`);
@@ -377,11 +376,13 @@ app.post("/update-footer", async (req, res) => {
     };
 
     // Update both files
+    console.debug("Updating both files: html5-bootstrap.xsl and cover.xsl...");
     await Promise.all([
       updateFooterInFile(footerFile1, footerRegex, footerContent),
       updateFooterInFile(coverXSLPath, footerRegex, footerContent),
     ]);
 
+    console.info("Footer updated successfully in both files!");
     res.send("Footer updated successfully in both files!");
   } catch (err) {
     console.error("Error during footer update:", err.message);

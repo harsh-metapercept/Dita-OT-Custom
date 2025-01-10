@@ -317,7 +317,7 @@ See the accompanying LICENSE file for applicable license.
     <footer
         class="ignore-this no-print sticky-lg-bottom">
         <div class="container">
-          <span class="credit ignore-this no-print">Copyright © 2024 <a href="https://www.youtube.com/" target="_blank">youtube</a> All Rights Reserved</span>
+          <span class="credit ignore-this no-print">Copyright © 2025 <a href="wrsfqfqfwq" target="_blank">arfaqq</a> All Rights Reserved</span>
         </div>
       </footer>
     <div
